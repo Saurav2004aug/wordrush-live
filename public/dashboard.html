@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Interactive Bitcoin market dashboard exploring price history, returns, volatility and drawdowns using daily BTC/USD data.">
+<title>Bitcoin Market Lens | Interactive Data Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#182230;--muted:#687789;--line:#e6ebf2;--blue:#235be8;--cyan:#20b8c5;--orange:#f7931a;--green:#138a65;--red:#cb4953;--navy:#0d1830}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,select{font:inherit}.shell{max-width:1440px;margin:auto;padding:26px 28px 42px}.hero{background:linear-gradient(120deg,#0d1830 0%,#172b53 68%,#214c86 100%);color:#fff;border-radius:22px;padding:28px 30px 24px;position:relative;overflow:hidden;box-shadow:0 12px 32px #12264b18}.hero:after{content:"₿";position:absolute;right:28px;top:-45px;font-size:250px;font-weight:800;color:#ffffff09;line-height:1}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1}.brand{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;font-size:12px}.coin{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#f7931a;color:#fff;font-size:21px;font-weight:800}.live{border:1px solid #ffffff35;border-radius:999px;padding:6px 10px;color:#dfe9ff;font-size:11px;letter-spacing:.08em;text-transform:uppercase}.hero h1{position:relative;z-index:1;font-size:clamp(27px,3vw,39px);line-height:1.12;margin:22px 0 8px;letter-spacing:-.035em}.hero p{position:relative;z-index:1;margin:0;color:#c3d1e9;max-width:720px}.hero-meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;color:#dbe5f6;font-size:12px}.hero-meta span{display:flex;gap:7px;align-items:center}.dot{width:6px;height:6px;background:var(--cyan);border-radius:50%}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0 14px;flex-wrap:wrap}.range-set{display:flex;gap:5px;padding:4px;background:#e8edf5;border-radius:12px}.range-set button{border:0;background:transparent;color:#596679;border-radius:9px;padding:7px 13px;cursor:pointer;font-weight:650;font-size:12px}.range-set button.active{background:#fff;color:var(--blue);box-shadow:0 2px 6px #0f2e5b12}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{background:#fff;border:1px solid var(--line);color:#3f5067;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:650}.btn:hover{border-color:#b9c8dc}.btn-primary{background:var(--blue);border-color:var(--blue);color:white}.section-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:22px 2px 10px}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 16px #17345b06}.kpi{padding:17px 18px;min-height:124px}.kpi-head{display:flex;justify-content:space-between;align-items:center;gap:9px;color:var(--muted);font-size:12px;font-weight:650}.mini-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eff4ff;color:var(--blue);font-weight:800}.kpi-value{font-size:clamp(22px,2.3vw,30px);font-weight:800;letter-spacing:-.04em;margin:14px 0 4px;white-space:nowrap}.kpi-note{font-size:11px;color:var(--muted)}.positive{color:var(--green)}.negative{color:var(--red)}.main-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:14px;margin-top:14px}.chart-card{padding:19px 20px 16px;min-width:0}.chart-heading{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:15px}.chart-heading h2{font-size:15px;margin:0 0 4px;letter-spacing:-.01em}.chart-heading p{font-size:11px;color:var(--muted);margin:0}.chart-chip{border-radius:8px;background:#f0f4fb;padding:5px 8px;color:#59708d;font-size:10px;font-weight:750;white-space:nowrap}.chart-wrap{height:315px;position:relative}.small-chart{height:260px}.two-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.insights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:14px}.insight{padding:17px 18px}.insight .tag{font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--blue)}.insight h3{font-size:14px;margin:9px 0 6px}.insight p{font-size:12px;color:#58677a;margin:0}.table-card{margin-top:14px;padding:19px 20px}.table-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.table-top h2{font-size:15px;margin:0}.table-wrap{overflow:auto;max-height:340px}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th,td{border-bottom:1px solid #edf0f5;text-align:right;padding:10px 12px}th{position:sticky;top:0;background:#f8faff;color:#607187;font-size:10px;letter-spacing:.06em;text-transform:uppercase}td:first-child,th:first-child{text-align:left}tbody tr:hover{background:#fafcff}.source-note{margin-top:17px;padding:15px 17px;border:1px solid #e2e8f1;background:#f8faff;border-radius:14px;color:#627187;font-size:11px}.source-note strong{color:#34465c}.source-note a{color:var(--blue);text-decoration:none}.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 2px 0;color:#8390a0;font-size:10px}.loading{padding:25px;text-align:center;color:var(--muted)}.error{background:#fff2f1;border:1px solid #f7c7c4;color:#873331;border-radius:12px;padding:16px;margin-top:14px;display:none}.error a{color:#873331}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){.shell{padding:15px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.main-grid{grid-template-columns:1fr}.two-grid{grid-template-columns:1fr}.insights{grid-template-columns:1fr}.chart-wrap{height:285px}.hero{padding:22px}.hero:after{font-size:170px;right:-5px;top:-20px}.kpi{min-height:116px}}
+@media(max-width:420px){.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:13px}.kpi-value{font-size:21px}.kpi-note{font-size:10px}.chart-card{padding:15px}.range-set button{padding:7px 9px}.hero h1{font-size:27px}.live{font-size:9px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="hero">
+  <div class="topline"><div class="brand"><span class="coin">₿</span><span>Data stories / Digital assets</span></div><div class="live" id="status">Loading daily data</div></div>
+  <h1>Bitcoin Market Lens</h1>
+  <p>A data-led view of long-run BTC/USD price performance, calendar-year returns, realized volatility and peak-to-trough risk.</p>
+  <div class="hero-meta"><span><i class="dot"></i> Daily OHLCV</span><span>USD denomination</span><span id="dateRange">Preparing date range…</span></div>
+</header>
+
+<div class="toolbar">
+  <div class="range-set" aria-label="Price chart date range">
+    <button data-range="1Y">1Y</button><button data-range="3Y">3Y</button><button data-range="5Y" class="active">5Y</button><button data-range="ALL">ALL</button>
+  </div>
+  <div class="actions"><button class="btn" id="scaleToggle">Switch to log scale</button><button class="btn" id="downloadBtn">Export cleaned CSV ↓</button><a class="btn" href="https://raw.githubusercontent.com/daniegitx1/btc-price-history/main/data/btc_usd_daily.csv" target="_blank" rel="noreferrer">Source data ↗</a></div>
+</div>
+
+<div class="section-label">Market snapshot</div>
+<section class="kpis">
+  <article class="card kpi"><div class="kpi-head"><span>Latest daily close</span><span class="mini-icon">$</span></div><div class="kpi-value" id="latestPrice">—</div><div class="kpi-note" id="latestDate">Waiting for source data</div></article>
+  <article class="card kpi"><div class="kpi-head"><span>2026 year-to-date</span><span class="mini-icon">↗</span></div><div class="kpi-value" id="ytdReturn">—</div><div class="kpi-note">Vs. last available 2025 close</div></article>
+  <article class="card kpi"><div class="kpi-head"><span>30-day realized volatility</span><span class="mini-icon">∿</span></div><div class="kpi-value" id="latestVol">—</div><div class="kpi-note">Annualized standard deviation of daily returns</div></article>
+  <article class="card kpi"><div class="kpi-head"><span>Maximum close drawdown</span><span class="mini-icon">↓</span></div><div class="kpi-value negative" id="maxDrawdown">—</div><div class="kpi-note" id="drawdownDates">Peak-to-trough, full available sample</div></article>
+</section>
+
+<div class="main-grid">
+  <section class="card chart-card">
+    <div class="chart-heading"><div><h2>BTC/USD price history</h2><p>Daily close · choose a time window above</p></div><span class="chart-chip" id="priceCount">— daily closes</span></div>
+    <div class="chart-wrap"><canvas id="priceChart" aria-label="Bitcoin daily close price chart"></canvas></div>
+  </section>
+  <section class="card chart-card">
+    <div class="chart-heading"><div><h2>Calendar-year returns</h2><p>Year-end close vs. prior year-end close</p></div><span class="chart-chip">%</span></div>
+    <div class="chart-wrap"><canvas id="annualChart" aria-label="Annual Bitcoin returns bar chart"></canvas></div>
+  </section>
+</div>
+
+<div class="two-grid">
+  <section class="card chart-card">
+    <div class="chart-heading"><div><h2>Realized volatility</h2><p>30-day rolling volatility, annualized · recent 5 years</p></div><span class="chart-chip">Risk</span></div>
+    <div class="chart-wrap small-chart"><canvas id="volChart" aria-label="Rolling volatility chart"></canvas></div>
+  </section>
+  <section class="card chart-card">
+    <div class="chart-heading"><div><h2>Drawdown from previous high</h2><p>Distance below the running all-time closing high · recent 5 years</p></div><span class="chart-chip">Drawdown</span></div>
+    <div class="chart-wrap small-chart"><canvas id="ddChart" aria-label="Bitcoin drawdown chart"></canvas></div>
+  </section>
+</div>
+
+<div class="section-label">What the data says</div>
+<section class="insights">
+  <article class="card insight"><div class="tag">01 / Downside risk</div><h3 id="insightDDTitle">Largest drawdown</h3><p id="insightDD">Calculating the largest peak-to-trough decline…</p></article>
+  <article class="card insight"><div class="tag">02 / Return dispersion</div><h3 id="insightYearTitle">Annual extremes</h3><p id="insightYear">Comparing full calendar years…</p></article>
+  <article class="card insight"><div class="tag">03 / Daily shocks</div><h3 id="insightDayTitle">Largest daily moves</h3><p id="insightDay">Finding the most extreme daily moves…</p></article>
+</section>
+
+<section class="card table-card">
+  <div class="table-top"><div><h2>Recent observations</h2><div style="font-size:11px;color:#687789;margin-top:4px">Most recent 12 completed daily candles; prices in USD.</div></div><button class="btn" id="downloadRecent">Download table CSV</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Date (UTC)</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Daily return</th><th>Volume (BTC)</th></tr></thead><tbody id="recentRows"><tr><td colspan="7" class="loading">Waiting for source data…</td></tr></tbody></table></div>
+</section>
+
+<div id="error" class="error"></div>
+<div class="source-note"><strong>Source & methods.</strong> Daily BTC/USD OHLCV candles from Bitstamp, via the public <a href="https://github.com/daniegitx1/btc-price-history" target="_blank" rel="noreferrer">BTC daily price history repository</a>. Daily return = close / prior close − 1. Realized volatility = sample standard deviation of the last 30 daily returns × √365. Drawdown = close / running maximum close − 1. The earliest BTC history is from a single exchange with thinner liquidity; repeated closes on low/no-trade days are retained as reported. This dashboard is for educational analysis, not investment advice.</div>
+<footer class="footer"><span>BITCOIN MARKET LENS · INTERACTIVE ANALYTICS</span><span id="rowCount">Loading observations…</span><span>Source data is refreshed by its maintainer; latest completed UTC day only.</span></footer>
+</div>
+<script>
+(function(){
+"use strict";
+const CSV_URL="https://raw.githubusercontent.com/daniegitx1/btc-price-history/main/data/btc_usd_daily.csv";
+const $=id=>document.getElementById(id);
+let rows=[], annual=[], rolling=[], currentRange="5Y", logScale=false, charts={};
+const blue="#235be8", cyan="#20b8c5", orange="#f7931a", green="#138a65", red="#cb4953";
+const usd=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:n<10?2:0}).format(n);
+const num=n=>new Intl.NumberFormat("en-US",{maximumFractionDigits:2}).format(n);
+const signedPct=n=>(n>0?"+":"")+n.toFixed(1)+"%";
+const shortDate=s=>new Date(s+"T00:00:00Z").toLocaleDateString("en-US",{year:"numeric",month:"short",day:"2-digit",timeZone:"UTC"});
+const compact=n=>n>=1e6?"$"+(n/1e6).toFixed(1)+"m":n>=1e3?"$"+(n/1e3).toFixed(1)+"k":"$"+n.toFixed(0);
+function safeText(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function parseCSV(text){
+ const lines=text.trim().split(/\r?\n/);if(lines.length<2)throw new Error("The CSV did not contain any observations.");
+ const header=lines[0].split(",").map(x=>x.trim()), ix={};header.forEach((h,i)=>ix[h]=i);
+ ["date_utc","open","high","low","close","volume"].forEach(k=>{if(ix[k]===undefined)throw new Error("Expected column missing from CSV: "+k);});
+ const out=[], seen=new Set();
+ for(let i=1;i<lines.length;i++){
+   const p=lines[i].split(",");const date=p[ix.date_utc], close=Number(p[ix.close]);
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(date||"")||!Number.isFinite(close)||close<=0||seen.has(date))continue;
+   const row={date,open:Number(p[ix.open]),high:Number(p[ix.high]),low:Number(p[ix.low]),close,volume:Number(p[ix.volume])};
+   if(![row.open,row.high,row.low,row.volume].every(Number.isFinite))continue;
+   if(row.high<Math.max(row.open,row.close)||row.low>Math.min(row.open,row.close)||row.volume<0)continue;
+   out.push(row);seen.add(date);
+ }
+ out.sort((a,b)=>a.date.localeCompare(b.date));return out;
+}
+function analyze(){
+ let peak=-Infinity, peakDate="", maxDD=0, maxDDPeak="", maxDDTrough="";
+ for(let i=0;i<rows.length;i++){
+   const r=rows[i];r.ret=i?(r.close/rows[i-1].close-1)*100:null;
+   if(r.close>peak){peak=r.close;peakDate=r.date;}
+   r.drawdown=(r.close/peak-1)*100;
+   if(r.drawdown<maxDD){maxDD=r.drawdown;maxDDPeak=peakDate;maxDDTrough=r.date;}
+ }
+ const valid=rows.slice(1);
+ rolling=[];
+ for(let i=29;i<valid.length;i++){
+   const win=valid.slice(i-29,i+1).map(r=>r.ret/100);
+   const mean=win.reduce((a,b)=>a+b,0)/win.length;
+   const variance=win.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(win.length-1);
+   rolling.push({date:valid[i].date,vol:Math.sqrt(variance*365)*100});
+ }
+ annual=[];
+ let i=0;
+ while(i<rows.length){
+   const year=rows[i].date.slice(0,4);let j=i;
+   while(j+1<rows.length&&rows[j+1].date.slice(0,4)===year)j++;
+   const isFirst=i===0, isLast=j===rows.length-1;
+   const base=isFirst?rows[i].close:rows[i-1].close;
+   annual.push({year,close:rows[j].close,ret:(rows[j].close/base-1)*100,start:rows[i].date,end:rows[j].date,partial:isFirst||isLast,days:j-i+1});
+   i=j+1;
+ }
+ const latest=rows[rows.length-1], recentYear=latest.date.slice(0,4);
+ const yearIndex=rows.findIndex(r=>r.date.slice(0,4)===recentYear);
+ const baseline=yearIndex>0?rows[yearIndex-1].close:rows[yearIndex].close;
+ const currentVol=rolling.length?rolling[rolling.length-1].vol:NaN;
+ const maxVol=rolling.reduce((a,b)=>!a||b.vol>a.vol?b:a,null);
+ const dayRows=valid.filter(r=>r.ret!==null);
+ const bestDay=dayRows.reduce((a,b)=>!a||b.ret>a.ret?b:a,null);
+ const worstDay=dayRows.reduce((a,b)=>!a||b.ret<a.ret?b:a,null);
+ const fullYears=annual.filter(x=>!x.partial);
+ const bestYear=fullYears.reduce((a,b)=>!a||b.ret>a.ret?b:a,null);
+ const worstYear=fullYears.reduce((a,b)=>!a||b.ret<a.ret?b:a,null);
+ return {latest,overall:(latest.close/rows[0].close-1)*100,ytd:(latest.close/baseline-1)*100,currentVol,maxDD,maxDDPeak,maxDDTrough,maxVol,bestDay,worstDay,bestYear,worstYear};
+}
+function clearChart(key){if(charts[key])charts[key].destroy();}
+function commonOptions(tooltipTitle){
+ return {responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:"#111c32",padding:11,displayColors:false,titleColor:"#d9e7ff",bodyColor:"#fff",callbacks:{title:items=>items.length?items[0].label:"",label:ctx=>tooltipTitle(ctx)}}},scales:{x:{grid:{display:false},ticks:{color:"#8190a4",font:{size:10},maxTicksLimit:8,maxRotation:0},border:{display:false}},y:{grid:{color:"#edf1f6"},ticks:{color:"#8190a4",font:{size:10},maxTicksLimit:6,callback:v=>v},border:{display:false}}}};
+}
+function makePriceChart(){
+ clearChart("price");
+ const latest=rows[rows.length-1], cutoff=currentRange==="ALL"?"0000-01-01":new Date(Date.UTC(Number(latest.date.slice(0,4))-(currentRange==="1Y"?1:currentRange==="3Y"?3:5),Number(latest.date.slice(5,7))-1,Number(latest.date.slice(8,10)))).toISOString().slice(0,10);
+ const arr=rows.filter(r=>r.date>=cutoff);
+ $("priceCount").textContent=num(arr.length)+" daily closes";
+ const ctx=$("priceChart").getContext("2d"), grad=ctx.createLinearGradient(0,0,0,320);grad.addColorStop(0,"rgba(35,91,232,.20)");grad.addColorStop(1,"rgba(35,91,232,0)");
+ const options=commonOptions(c=>usd(c.parsed.y));
+ options.scales.y.type=logScale?"logarithmic":"linear";
+ options.scales.y.ticks.callback=v=>compact(Number(v));
+ charts.price=new Chart(ctx,{type:"line",data:{labels:arr.map(r=>r.date),datasets:[{data:arr.map(r=>r.close),borderColor:blue,backgroundColor:grad,fill:true,borderWidth:2,pointRadius:0,pointHitRadius:5,tension:.1}]},options});
+}
+function makeAnnualChart(){
+ clearChart("annual");
+ const ctx=$("annualChart").getContext("2d"), opts=commonOptions(c=>signedPct(c.parsed.y));
+ opts.scales.y.ticks.callback=v=>v+"%";
+ charts.annual=new Chart(ctx,{type:"bar",data:{labels:annual.map(a=>a.year+(a.year===rows[0].date.slice(0,4)?"*":a.year===rows[rows.length-1].date.slice(0,4)?" YTD":"")),datasets:[{data:annual.map(a=>a.ret),backgroundColor:annual.map(a=>a.ret>=0?"rgba(19,138,101,.80)":"rgba(203,73,83,.82)"),borderRadius:4,borderSkipped:false}]},options:opts});
+}
+function makeVolChart(){
+ clearChart("vol");
+ const cutoff=rows[rows.length-1].date.slice(0,4)-5+"-"+rows[rows.length-1].date.slice(5,10);
+ const arr=rolling.filter(r=>r.date>=cutoff);
+ const ctx=$("volChart").getContext("2d"), opts=commonOptions(c=>c.parsed.y.toFixed(1)+"%");
+ opts.scales.y.ticks.callback=v=>v+"%";
+ charts.vol=new Chart(ctx,{type:"line",data:{labels:arr.map(r=>r.date),datasets:[{data:arr.map(r=>r.vol),borderColor:orange,backgroundColor:"rgba(247,147,26,.12)",fill:true,borderWidth:1.8,pointRadius:0,tension:.15}]},options:opts});
+}
+function makeDDChart(){
+ clearChart("dd");
+ const cutoff=rows[rows.length-1].date.slice(0,4)-5+"-"+rows[rows.length-1].date.slice(5,10);
+ const arr=rows.filter(r=>r.date>=cutoff);
+ const ctx=$("ddChart").getContext("2d"), opts=commonOptions(c=>c.parsed.y.toFixed(1)+"%");
+ opts.scales.y.ticks.callback=v=>v+"%";opts.scales.y.suggestedMax=0;
+ charts.dd=new Chart(ctx,{type:"line",data:{labels:arr.map(r=>r.date),datasets:[{data:arr.map(r=>r.drawdown),borderColor:red,backgroundColor:"rgba(203,73,83,.12)",fill:true,borderWidth:1.7,pointRadius:0,tension:.12}]},options:opts});
+}
+function renderMetrics(m){
+ $("latestPrice").textContent=usd(m.latest.close);
+ $("latestDate").textContent=shortDate(m.latest.date)+" · Bitstamp close";
+ $("ytdReturn").textContent=signedPct(m.ytd);
+ $("ytdReturn").className="kpi-value "+(m.ytd>=0?"positive":"negative");
+ $("latestVol").textContent=m.currentVol.toFixed(1)+"%";
+ $("maxDrawdown").textContent=m.maxDD.toFixed(1)+"%";
+ $("drawdownDates").textContent=shortDate(m.maxDDPeak)+" peak → "+shortDate(m.maxDDTrough)+" trough";
+ $("dateRange").textContent=shortDate(rows[0].date)+" — "+shortDate(m.latest.date);
+ $("rowCount").textContent=num(rows.length)+" validated daily observations · latest close "+shortDate(m.latest.date);
+ $("insightDDTitle").textContent=m.maxDD.toFixed(1)+"% maximum drawdown";
+ $("insightDD").textContent="The deepest close-to-close decline in the available history ran from "+shortDate(m.maxDDPeak)+" to "+shortDate(m.maxDDTrough)+". Long-run growth came with severe interim losses.";
+ $("insightYearTitle").textContent="+"+m.bestYear.ret.toFixed(0)+"% vs. "+m.worstYear.ret.toFixed(0)+"%";
+ $("insightYear").textContent=m.bestYear.year+" was the strongest full calendar year in this sample; "+m.worstYear.year+" was the weakest. Annual returns vary widely, so a long-term price chart alone can hide the path and timing of risk.";
+ $("insightDayTitle").textContent="Daily move extremes";
+ $("insightDay").textContent="Largest up day: "+signedPct(m.bestDay.ret)+" on "+shortDate(m.bestDay.date)+". Largest down day: "+signedPct(m.worstDay.ret)+" on "+shortDate(m.worstDay.date)+". The earliest years are from a smaller exchange with thinner liquidity.";
+ $("status").textContent="DATA LOADED";
+ $("status").style.color="#d4ffef";$("status").style.borderColor="#4ec8a466";
+}
+function renderTable(){
+ const slice=rows.slice(-12).reverse();
+ $("recentRows").innerHTML=slice.map(r=>'<tr><td>'+r.date+'</td><td>'+usd(r.open)+'</td><td>'+usd(r.high)+'</td><td>'+usd(r.low)+'</td><td><strong>'+usd(r.close)+'</strong></td><td class="'+(r.ret>=0?"positive":"negative")+'">'+(r.ret===null?"—":signedPct(r.ret))+'</td><td>'+num(r.volume)+'</td></tr>').join("");
+}
+function redraw(){makePriceChart();makeAnnualChart();makeVolChart();makeDDChart();}
+function downloadCSV(arr,name){
+ const header="date_utc,open,high,low,close,volume,daily_return_pct,drawdown_pct\n";
+ const body=arr.map(r=>[r.date,r.open,r.high,r.low,r.close,r.volume,r.ret===null?"":r.ret.toFixed(6),r.drawdown.toFixed(6)].join(",")).join("\n");
+ const blob=new Blob([header+body],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+document.querySelectorAll("[data-range]").forEach(btn=>btn.addEventListener("click",()=>{currentRange=btn.dataset.range;document.querySelectorAll("[data-range]").forEach(b=>b.classList.toggle("active",b===btn));if(rows.length)makePriceChart();}));
+$("scaleToggle").addEventListener("click",()=>{logScale=!logScale;$("scaleToggle").textContent=logScale?"Switch to linear scale":"Switch to log scale";if(rows.length)makePriceChart();});
+$("downloadBtn").addEventListener("click",()=>{if(rows.length)downloadCSV(rows,"bitcoin_daily_cleaned.csv");});
+$("downloadRecent").addEventListener("click",()=>{if(rows.length)downloadCSV(rows.slice(-12),"bitcoin_recent_12_days.csv");});
+async function init(){
+ try{
+   const response=await fetch(CSV_URL,{cache:"no-store"});
+   if(!response.ok)throw new Error("Dataset request failed (HTTP "+response.status+").");
+   rows=parseCSV(await response.text());
+   if(rows.length<100)throw new Error("The source returned too few valid rows.");
+   const m=analyze();renderMetrics(m);renderTable();redraw();
+ }catch(e){
+   $("status").textContent="DATA UNAVAILABLE";$("error").style.display="block";
+   $("error").innerHTML="<strong>Could not load the public CSV.</strong> This dashboard needs an internet connection and access to the dataset host. Refresh the page, or open the <a href='"+CSV_URL+"' target='_blank' rel='noreferrer'>source CSV</a> to check availability.<br><small>"+safeText(e.message||e)+"</small>";
+   $("recentRows").innerHTML='<tr><td colspan="7">Data could not be loaded.</td></tr>';
+ }
+}
+init();
+})();
+</script>
+</body>
+</html>

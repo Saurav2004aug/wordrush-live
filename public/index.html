@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10121d"><title>WordRush Live — Word Battle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+<header class="topbar"><a class="brand" href="/"><span class="brand-mark">W</span><span>WORDRUSH<span class="brand-light"> LIVE</span></span></a><div class="online"><i></i> REAL-TIME WORD BATTLE</div></header>
+<main>
+<section id="home" class="hero">
+  <div class="eyebrow"><span>✦</span> THINK FAST. SPELL FASTER.</div>
+  <h1>Words are your<br><span class="gradient-text">superpower.</span></h1>
+  <p class="subtitle">Race your friends to find words from a shared set of letters. Every second counts.</p>
+  <div class="panel entry-panel">
+    <label for="playerName">YOUR PLAYER NAME</label><input id="playerName" maxlength="18" placeholder="e.g. WordWizard" autocomplete="nickname">
+    <div class="entry-actions"><button id="createBtn" class="btn primary">Create a room <span>↗</span></button><div class="join-inline"><input id="roomCodeInput" maxlength="5" placeholder="ROOM CODE" aria-label="Room code"><button id="joinBtn" class="btn secondary">Join</button></div></div>
+    <p id="homeError" class="error" role="alert"></p>
+  </div>
+  <div class="feature-row"><div><b>02–08</b><span>PLAYERS</span></div><div><b>45 SEC</b><span>PER ROUND</span></div><div><b>05</b><span>ROUNDS</span></div></div>
+</section>
+<section id="game" class="hidden">
+  <div class="game-head"><div><div class="eyebrow">YOUR ROOM</div><div class="room-code-line"><span id="roomCode">-----</span><button id="copyBtn" class="copy-btn">Copy code</button></div></div><div id="statusPill" class="status-pill">WAITING</div></div>
+  <div class="game-grid">
+    <div class="main-column">
+      <div class="panel round-panel"><div class="round-meta"><span id="roundLabel">ROUND 1 / 5</span><span id="timerLabel">45s LEFT</span></div><div class="timer-track"><div id="timerBar"></div></div>
+        <div class="challenge-label">MAKE WORDS FROM THESE LETTERS</div><div id="letters" class="letters"><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span><span>?</span></div>
+        <p id="roundMessage" class="round-message">Waiting for the host to start the game…</p>
+        <form id="wordForm" class="word-form"><input id="wordInput" maxlength="12" placeholder="Type a word…" autocomplete="off" disabled><button class="btn primary" id="submitBtn" disabled>Submit ↗</button></form><p id="wordFeedback" class="feedback" aria-live="polite"></p>
+        <div class="rules"><b>HOW TO SCORE</b><span>3+ letter words · 1 point per letter · Each word can only be scored once.</span></div>
+      </div>
+      <div class="panel played-panel"><div class="section-head"><h2>Words played</h2><span id="wordCount" class="count">0</span></div><div id="playedWords" class="played-list"><div class="empty-state">Words will appear here as players score.</div></div></div>
+    </div>
+    <aside class="side-column"><div class="panel players-panel"><div class="section-head"><h2>Leaderboard</h2><span class="live-tag"><i></i> LIVE</span></div><div id="playersList" class="players-list"></div><div class="host-note">Host starts the game when everyone is ready.</div><button id="startBtn" class="btn primary full hidden">Start game ↗</button><button id="againBtn" class="btn primary full hidden">Play again ↗</button></div><div class="tip-card"><span class="tip-icon">✦</span><b>Quick tip</b><p>Longer valid words score more. Watch the letters carefully — you can use each letter only once per word.</p></div></aside>
+  </div>
+  <button id="leaveBtn" class="leave-btn">← Leave room</button>
+</section>
+</main>
+<footer><span>WORDRUSH LIVE</span><span>Made for friendly competition.</span></footer>
+<div id="toast" class="toast" role="status"></div>
+<script src="/socket.io/socket.io.js"></script><script src="/app.js"></script>
+</body></html>
